@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 
@@ -52,7 +53,18 @@ class BlogController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $blog= Blog::with('penulis')->find($id);
+
+        if ($blog) {
+            $data['success'] = true;
+            $data['message'] = 'Data ditemukan';
+            $data['data'] = $blog;
+            return response()->json($data, 200);
+        } else {
+            $data['success'] = false;
+            $data['message'] = 'Data tidak ditemukan';
+            return response()->json($data, 404);
+        }
     }
 
     /**
@@ -62,53 +74,43 @@ class BlogController extends Controller
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, string $id)
     {
         $blog = Blog::find($id);
-        if ($blog) {
-            $validate = $request->validate(
-                [
+        if (! $blog) {
+            return response()->json(['success' => false, 'message' => 'Data blog tidak ditemukan'], 404);
+        }
+
+        $validate = $request->validate(
+            [
                 'judul' => 'required',
                 'isi' => 'required',
                 'tanggal_penulisan' => 'required',
                 'penulis_id' => 'required|exists:penulis,id'
-                ]
-            );
-        }
-        
-      Blog::where('id', $id)->update($validate);
-      $blog = Blog::find($id);
-        if($blog){
-              $data['success'] = true;
-              $data['message'] = "Data blog berhasil diperbarui";
-              $data['data'] = $blog;
-               return response()->json($data,200);
-        }else{
-             $data['success'] = false;
-             $data['message'] = "Data blog tidak ditemukan";
-             return response()->json($data,404);
-        }
+            ]
+        );
+
+        $blog->update($validate);
+        $blog->refresh();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Data blog berhasil diperbarui',
+            'data' => $blog
+        ], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-         $blog = Blog::where('id',$id);
-        if($blog){
-            $blog->delete(); 
-              $data['success'] = true;
-              $data['message'] = "Data blog berhasil dihapus";
-               return response()->json($data,200);
-        } else {
-             $data['success'] = false;
-             $data['message'] = "Data blog tidak ditemukan";
-            return response()->json($data,404);
+        $blog = Blog::find($id);
+        if (! $blog) {
+            return response()->json(['success' => false, 'message' => 'Data blog tidak ditemukan'], 404);
         }
+
+        $blog->delete();
+
+        return response()->json(['success' => true, 'message' => 'Data blog berhasil dihapus'], 200);
     }
+
 }

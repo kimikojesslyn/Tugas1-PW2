@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Penulis;
 use Illuminate\Http\Request;
 
@@ -50,7 +51,18 @@ class PenulisController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $penulis = Penulis::with('blog')->find($id);
+
+        if ($penulis) {
+            $data['success'] = true;
+            $data['message'] = 'Data ditemukan';
+            $data['data'] = $penulis;
+            return response()->json($data, 200);
+        } else {
+            $data['success'] = false;
+            $data['message'] = 'Data tidak ditemukan';
+            return response()->json($data, 404);
+        }
     }
 
     /**
