@@ -48,9 +48,6 @@ class BlogController extends Controller
         }                       
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $blog= Blog::with('penulis')->find($id);
@@ -67,9 +64,7 @@ class BlogController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(string $id)
     {
         //

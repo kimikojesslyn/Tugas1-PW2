@@ -22,6 +22,9 @@ Route::patch('/blog/{id}', [BlogController::class, 'update']);
 Route::delete('/penulis/{id}', [PenulisController::class, 'destroy']);
 Route::delete('/blog/{id}', [BlogController::class, 'destroy']);
 
+Route::get('/penulis/{id}', [PenulisController::class, 'show']);
+Route::get('/blog/{id}', [BlogController::class, 'show']);
+
 // Route::post('/penulis', [PenulisController::class,'store'])->middleware('auth:sanctum');
 // Route::post('/blog', [BlogController::class,'store'])->middleware('auth:sanctum');;
 
